@@ -388,8 +388,6 @@ python -m unittest discover -s tests -v
 
 本项目参考了两类公开 Skill 的组织思路：
 
-- [`paperforge`](https://github.com/Earl000333/paperforge) 的优点是任务入口直观，Prompt、Skill 和说明文档分工清楚，
-  适合用户快速理解“论文表达”与“专利表达”的差异；
 - [`nature-skills`](https://github.com/Yuan1z0825/nature-skills) 的优点是使用路由文件和按需片段控制上下文，并通过输出
   契约、测试样例和质量清单约束复杂任务。
 
