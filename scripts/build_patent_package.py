@@ -76,12 +76,28 @@ def main() -> int:
     args = parser.parse_args()
 
     data = json.loads(args.draft.read_text(encoding="utf-8"))
-    validate(data)
     root = Path(__file__).resolve().parent
+    validator_script = root / "validate_patent_draft.py"
+    validator_spec = importlib.util.spec_from_file_location(
+        "patent_draft_validator", validator_script
+    )
+    validator = importlib.util.module_from_spec(validator_spec)
+    sys.modules[validator_spec.name] = validator
+    validator_spec.loader.exec_module(validator)
+    validation_findings = validator.validate(data)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    validation_report = args.output_dir / f"{args.prefix}-草稿验证报告.txt"
+    validation_report.write_text(
+        validator.format_report(validation_findings), encoding="utf-8"
+    )
+    if any(item.level == "ERROR" for item in validation_findings):
+        print(validation_report)
+        raise SystemExit(1)
+
+    validate(data)
     docx_script = root / "render_patent_docx.py"
     figure_script = root / "render_flowchart_svg.py"
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
     figure_dir = args.output_dir / f"{args.prefix}-figures"
     run(
         [
@@ -124,6 +140,7 @@ def main() -> int:
     audit_script = root / "audit_claims.py"
     spec = importlib.util.spec_from_file_location("patent_claim_audit", audit_script)
     audit_module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = audit_module
     spec.loader.exec_module(audit_module)
     findings = audit_module.audit(claims_text.read_text(encoding="utf-8"))
     if findings:
@@ -143,7 +160,7 @@ def main() -> int:
     if args.draft.resolve() != json_copy.resolve():
         shutil.copy2(args.draft, json_copy)
 
-    for output in (*outputs.values(), json_copy, audit):
+    for output in (*outputs.values(), json_copy, audit, validation_report):
         print(output)
     return 0
 

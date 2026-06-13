@@ -104,6 +104,24 @@ def validate_figure(
             errors.append("flowchart has no start node")
         if not any(value == 0 for value in outgoing.values()):
             errors.append("flowchart has no end node")
+        starts = [node_id for node_id, count in incoming.items() if count == 0]
+        adjacency = {node_id: set() for node_id in ids}
+        for edge in figure.get("edges", []):
+            source = str(edge.get("from", ""))
+            target = str(edge.get("to", ""))
+            if source in adjacency and target in id_set:
+                adjacency[source].add(target)
+        reachable = set(starts)
+        pending = list(starts)
+        while pending:
+            current = pending.pop()
+            for target in adjacency[current]:
+                if target not in reachable:
+                    reachable.add(target)
+                    pending.append(target)
+        disconnected = sorted(id_set - reachable)
+        if disconnected:
+            errors.append(f"unreachable nodes from any start node: {disconnected}")
     for node in nodes:
         node_id = str(node.get("id", ""))
         if outgoing.get(node_id) == 0 and VAGUE_FINAL_RESULT.search(str(node.get("label", ""))):
