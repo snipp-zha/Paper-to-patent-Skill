@@ -117,8 +117,10 @@ Paper-to-patent-Skill/
 │   ├── render_flowchart_svg.py
 │   ├── render_patent_docx.py
 │   └── validate_patent_draft.py
-└── tests/
+├── tests/
     └── test_validation.py
+└── skills/
+    └── nature-paper-to-patent/
 ```
 
 - `SKILL.md`：供 Agent 阅读的精简路由指令；
@@ -128,6 +130,8 @@ Paper-to-patent-Skill/
 - `scripts/`：项目初始化、PDF 提取、草稿校验、公式转换、附图生成、
   DOCX 打包和权利要求检查工具；
 - `evals/` 与 `tests/`：行为契约和自动校验测试。
+- `skills/nature-paper-to-patent/`：按照 `nature-skills` 目录规范整理的
+  独立可安装版本，可用于向该项目提交贡献。
 
 ## 推荐整体工作目录
 
