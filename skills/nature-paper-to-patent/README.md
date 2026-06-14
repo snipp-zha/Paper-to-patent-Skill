@@ -156,5 +156,8 @@ novelty, inventorship, ownership, infringement, or filing-readiness opinion,
 and it requires inventor confirmation and qualified Chinese patent
 professional review.
 
+Contributed by
+[`snipp-zha`](https://github.com/snipp-zha).
+
 The standalone development repository is
 [`snipp-zha/Paper-to-patent-Skill`](https://github.com/snipp-zha/Paper-to-patent-Skill).
